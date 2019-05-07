@@ -96,21 +96,27 @@ fn render(state: &mut Resources) -> Result<(), String> {
     state.canvas.clear();
     let now = Local::now();
 
-    let hour_low = now.hour() % 10;
-    putfigure(state, (now.hour() - hour_low) as u8 / 10, 2, 0)?;
-    putfigure(state, hour_low as u8, 4, 1)?;
+    puttimecomponent(state, now.hour(), 0, 2, 4)?;
+    puttimecomponent(state, now.minute(), 2, 3, 4)?;
+    puttimecomponent(state, now.second(), 4, 3, 4)?;
 
-    let minute_low = now.minute() % 10;
-    putfigure(state, (now.minute() - minute_low) as u8 / 10, 3, 2)?;
-    putfigure(state, minute_low as u8, 4, 3)?;
-
-    let second_low = now.second();
-    putfigure(state, (now.second() - second_low) as u8 / 10, 3, 4)?;
-    putfigure(state, second_low as u8, 4, 5)?;
     state.canvas.present();
     Ok(())
 }
-fn putfigure(state: &mut Resources, digit: u8, bits: u8, position: u8) -> Result<(), String> {
+
+fn puttimecomponent(
+    state: &mut Resources,
+    value: u32,
+    position: u8,
+    bits0: u8,
+    bits1: u8,
+) -> Result<(), String> {
+    let component_low = value % 10;
+    putdigit(state, (value - component_low) as u8 / 10, bits0, position)?;
+    putdigit(state, component_low as u8, bits1, position + 1)?;
+    Ok(())
+}
+fn putdigit(state: &mut Resources, digit: u8, bits: u8, position: u8) -> Result<(), String> {
     for bit in 0..bits {
         putled(
             state,
