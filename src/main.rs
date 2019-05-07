@@ -68,6 +68,7 @@ fn run() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
     canvas.set_draw_color(Color::RGB(255, 255, 255));
+    canvas.clear();
 
     let texture_creator = canvas.texture_creator();
     let mut state = Resources::new(sdl_context, &mut canvas, &texture_creator)?;
@@ -93,7 +94,6 @@ fn run() -> Result<(), String> {
 }
 
 fn render(state: &mut Resources) -> Result<(), String> {
-    state.canvas.clear();
     let now = Local::now();
 
     puttimecomponent(state, now.hour(), 0, 2, 4)?;
