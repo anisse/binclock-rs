@@ -1,0 +1,14 @@
+[package]
+name = "binclock-rs"
+version = "0.1.0"
+authors = ["Anisse Astier <anisse@astier.eu>"]
+edition = "2018"
+
+[dependencies]
+chrono = "0.4.6"
+sdl2 = "0.32.2"
+
+#[dependencies.sdl2]
+#version = "0.32.2"
+#default-features = false
+#features = ["image",]
