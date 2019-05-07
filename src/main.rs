@@ -1,6 +1,7 @@
 extern crate sdl2;
 
 use std::path::Path;
+use std::time::Duration;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -10,7 +11,8 @@ use sdl2::render::{Texture, TextureCreator, WindowCanvas};
 use sdl2::surface::Surface;
 use sdl2::video::WindowContext;
 use sdl2::Sdl;
-use std::time::Duration;
+
+use chrono::{Local, Timelike};
 
 const LED_SIZE: u32 = 30;
 
@@ -84,7 +86,7 @@ fn run() -> Result<(), String> {
                 _ => {}
             }
         }
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
     }
 
     Ok(())
@@ -92,14 +94,19 @@ fn run() -> Result<(), String> {
 
 fn render(state: &mut Resources) -> Result<(), String> {
     state.canvas.clear();
-    putfigure(state, 1, 2, 0)?;
-    putfigure(state, 3, 4, 1)?;
+    let now = Local::now();
 
-    putfigure(state, 3, 3, 2)?;
-    putfigure(state, 7, 4, 3)?;
+    let hour_low = now.hour() % 10;
+    putfigure(state, (now.hour() - hour_low) as u8 / 10, 2, 0)?;
+    putfigure(state, hour_low as u8, 4, 1)?;
 
-    putfigure(state, 4, 3, 4)?;
-    putfigure(state, 2, 4, 5)?;
+    let minute_low = now.minute() % 10;
+    putfigure(state, (now.minute() - minute_low) as u8 / 10, 3, 2)?;
+    putfigure(state, minute_low as u8, 4, 3)?;
+
+    let second_low = now.second();
+    putfigure(state, (now.second() - second_low) as u8 / 10, 3, 4)?;
+    putfigure(state, second_low as u8, 4, 5)?;
     state.canvas.present();
     Ok(())
 }
