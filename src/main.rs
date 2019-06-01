@@ -62,7 +62,7 @@ fn run() -> Result<(), String> {
         .window("rust-sdl2 demo: Video", 6 * LED_SIZE, 4 * LED_SIZE)
         .position_centered()
         .borderless()
-        .opengl()
+        //.opengl()
         .build()
         .map_err(|e| e.to_string())?;
 
