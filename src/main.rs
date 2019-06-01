@@ -74,19 +74,28 @@ fn run() -> Result<(), String> {
     let mut state = Resources::new(sdl_context, &mut canvas, &texture_creator)?;
 
     let mut event_pump = state.sdl_context.event_pump()?;
+    render(&mut state)?;
 
     'running: loop {
-        render(&mut state)?;
-        for event in event_pump.poll_iter() {
+        for event in event_pump.wait_timeout_iter(1000) {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'running,
-                _ => {}
+                _ => {
+                    print!("got {:?}... ", event);
+                }
             }
+            //print!("Rendering after event... ");
+            render(&mut state)?;
+            //print!("done\n");
+            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
         }
+        //print!("Rendering after timeout... ");
+        render(&mut state)?;
+        //print!("done\n");
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
     }
 
