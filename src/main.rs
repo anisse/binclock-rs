@@ -1,7 +1,6 @@
 extern crate sdl2;
 
 use std::path::Path;
-use std::time::Duration;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -21,6 +20,7 @@ struct Resources<'a> {
     canvas: &'a mut WindowCanvas,
     ledon: Texture<'a>,
     ledoff: Texture<'a>,
+    ts: i64,
 }
 
 impl<'a> Resources<'a> {
@@ -45,6 +45,7 @@ impl<'a> Resources<'a> {
             canvas: canvas,
             ledon: ledon,
             ledoff: ledoff,
+            ts: 0,
         })
     }
 }
@@ -74,7 +75,10 @@ fn run() -> Result<(), String> {
     let mut state = Resources::new(sdl_context, &mut canvas, &texture_creator)?;
 
     let mut event_pump = state.sdl_context.event_pump()?;
-    render(&mut state)?;
+
+    render(&mut state, true)?;
+
+    let mut should_render = false;
 
     'running: loop {
         for event in event_pump.wait_timeout_iter(1000) {
@@ -84,26 +88,33 @@ fn run() -> Result<(), String> {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'running,
-                _ => {
-                    print!("got {:?}... ", event);
+                Event::Window {
+                    win_event: sdl2::event::WindowEvent::Exposed,
+                    ..
+                }=> {
+                    //force refresh when window is exposed
+                    should_render = true;
                 }
+                _ => { } //ignore most events
             }
-            //print!("Rendering after event... ");
-            render(&mut state)?;
-            //print!("done\n");
-            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+            render(&mut state, should_render)?;
+            should_render = false;
         }
-        //print!("Rendering after timeout... ");
-        render(&mut state)?;
-        //print!("done\n");
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 30));
+        render(&mut state, should_render)?;
+        print!("done...\n");
     }
 
     Ok(())
 }
 
-fn render(state: &mut Resources) -> Result<(), String> {
+fn render(state: &mut Resources, force: bool) -> Result<(), String> {
     let now = Local::now();
+
+    if !force && state.ts == now.timestamp() { //no need to refresh
+        return Ok(());
+    }
+
+    state.ts = now.timestamp();
 
     puttimecomponent(state, now.hour(), 0, 2, 4)?;
     puttimecomponent(state, now.minute(), 2, 3, 4)?;
