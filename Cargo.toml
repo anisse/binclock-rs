@@ -5,5 +5,5 @@ authors = ["Anisse Astier <anisse@astier.eu>"]
 edition = "2018"
 
 [dependencies]
-chrono = "0.4.6"
+chrono = "0.4.7"
 sdl2 = "0.32.2"
