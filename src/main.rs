@@ -91,11 +91,11 @@ fn run() -> Result<(), String> {
                 Event::Window {
                     win_event: sdl2::event::WindowEvent::Exposed,
                     ..
-                }=> {
+                } => {
                     //force refresh when window is exposed
                     should_render = true;
                 }
-                _ => { } //ignore most events
+                _ => {} //ignore most events
             }
             render(&mut state, should_render)?;
             should_render = false;
@@ -110,7 +110,8 @@ fn run() -> Result<(), String> {
 fn render(state: &mut Resources, force: bool) -> Result<(), String> {
     let now = Local::now();
 
-    if !force && state.ts == now.timestamp() { //no need to refresh
+    if !force && state.ts == now.timestamp() {
+        //no need to refresh
         return Ok(());
     }
 
