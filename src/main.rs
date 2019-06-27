@@ -101,7 +101,6 @@ fn run() -> Result<(), String> {
             should_render = false;
         }
         render(&mut state, should_render)?;
-        print!("done...\n");
     }
 
     Ok(())
