@@ -81,7 +81,7 @@ fn run() -> Result<(), String> {
     let mut should_render = false;
 
     'running: loop {
-        for event in event_pump.wait_timeout_iter(1000) {
+        for event in event_pump.wait_timeout_iter(0) {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -101,6 +101,7 @@ fn run() -> Result<(), String> {
             should_render = false;
         }
         render(&mut state, should_render)?;
+        std::thread::sleep(std::time::Duration::from_millis(100)) // use our own waiting instead of sdl's 1ms one
     }
 
     Ok(())
