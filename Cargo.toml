@@ -6,4 +6,8 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4.11"
-sdl2 = "0.34.1"
+
+[dependencies.sdl2]
+version = "0.34.1"
+default-features = false
+features = []
